@@ -33,6 +33,12 @@ blueprint:
       default: []
       selector:
         action: {}
+    key_config:
+      name: Config scene
+      description: Action to run, when the config button is pressed (like the one from Inovelli switches)
+      default: []
+      selector:
+        action: {}
     key_up_held:
       name: Key Up/On held down
       description: Action to run, when the button is held down.
@@ -125,6 +131,8 @@ action:
     sequence: !input 'key_up'
   - conditions: '{{ scene_id == key_down_scene_id and key_pressed == "KeyPressed" }}'
     sequence: !input 'key_down'
+  - conditions: '{{ scene_id == 3 and key_pressed == "KeyPressed" }}'
+    sequence: !input 'key_config'
   - conditions: '{{ scene_id == key_up_scene_id and key_pressed == "KeyReleased" }}'
     sequence: !input 'key_up_released'
   - conditions: '{{ scene_id == key_down_scene_id and key_pressed == "KeyReleased" }}'
