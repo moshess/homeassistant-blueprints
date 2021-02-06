@@ -1,7 +1,7 @@
 blueprint:
-  name: MQTT scene state switch
-  description: Automation blueprint for many z-wave switches with up/down button
-    and multiple key presses. Designed with Inovelli LNSW31 and Zooz ZEN34 mappings in mind.
+  name: Zwavejs scene state switch
+  description: Automation blueprint for z-wave switches supporting scene selection
+    from up/down button
   domain: automation
   input:
     node_name:
@@ -20,86 +20,86 @@ blueprint:
     node_location:
       name: Location of the zwavejs entity
       description: Enter the location name configured to the device in zwavejs
-    button_a:
-      name: Button A - Up/On press 1x
+    key_up:
+      name: Key Up/On press 1x
       description: Action to run, when the button is pressed one time.
       default: []
       selector:
         action: {}
-    button_b:
-      name: Button B - Down/Off press 1x
+    key_down:
+      name: Key Down/Off press 1x
       description: Action to run, when the button is pressed one time.
       default: []
       selector:
         action: {}
-    button_a_held:
-      name: Button A - Up/On held down
+    key_up_held:
+      name: Key Up/On held down
       description: Action to run, when the button is held down.
       default: []
       selector:
         action: {}
-    button_b_held:
-      name: Button B - Down/Off held down
+    key_down_held:
+      name: Key Down/Off held down
       description: Action to run, when the button is held down.
       default: []
       selector:
         action: {}
-    button_a_released:
-      name: Button A - Up/On released
+    key_up_released:
+      name: Key Up/On released
       description: Action to run, when the button is released.
       default: []
       selector:
         action: {}
-    button_b_released:
-      name: Button B - Down/Off released
+    key_down_released:
+      name: Key Down/Off released
       description: Action to run, when the button is released.
       default: []
       selector:
         action: {}
-    button_a2:
-      name: Button A - Up/On press 2x
+    key_up2:
+      name: Key Up/On press 2x
       description: Action to run, when the button is pressed two times.
       default: []
       selector:
         action: {}
-    button_b2:
-      name: Button B - Down/Off press 2x
+    key_down2:
+      name: Key Down/Off press 2x
       description: Action to run, when the button is pressed two times.
       default: []
       selector:
         action: {}
-    button_a3:
-      name: Button A - Up/On press 3x
+    key_up3:
+      name: Key Up/On press 3x
       description: Action to run, when the button is pressed three times.
       default: []
       selector:
         action: {}
-    button_b3:
-      name: Button B - Down/Off press 3x
+    key_down3:
+      name: Key Down/Off press 3x
       description: Action to run, when the button is pressed three times.
       default: []
       selector:
         action: {}
-    button_a4:
-      name: Button A - Up/On press 4x
+    key_up4:
+      name: Key Up/On press 4x
       description: Action to run, when the button is pressed four times.
       default: []
       selector:
         action: {}
-    button_b4:
-      name: Button B - Down/Off press 4x
+    key_down4:
+      name: Key Down/Off press 4x
       description: Action to run, when the button is pressed four times.
       default: []
       selector:
         action: {}
-    button_a5:
-      name: Button A - Up/On press 5x
+    key_up5:
+      name: Key Up/On press 5x
       description: Action to run, when the button is pressed five times.
       default: []
       selector:
         action: {}
-    button_b5:
-      name: Button B - Down/Off press 5x
+    key_down5:
+      name: Key Down/Off press 5x
       description: Action to run, when the button is pressed five times.
       default: []
       selector:
@@ -119,30 +119,30 @@ action:
     state_value_id: '{{ trigger.event.data.new_state.state }}'
 - choose:
   - conditions: '{{ scene_id == 2 and state_value_id == 0 }}'
-    sequence: !input 'button_a'
+    sequence: !input 'key_up'
   - conditions: '{{ scene_id == 1 and state_value_id == 0 }}'
-    sequence: !input 'button_b'
+    sequence: !input 'key_down'
   - conditions: '{{ scene_id == 2 and state_value_id == 1 }}'
-    sequence: !input 'button_a_released'
+    sequence: !input 'key_up_released'
   - conditions: '{{ scene_id == 1 and state_value_id == 1 }}'
-    sequence: !input 'button_b_released'
+    sequence: !input 'key_down_released'
   - conditions: '{{ scene_id == 2 and state_value_id == 2 }}'
-    sequence: !input 'button_a_held'
+    sequence: !input 'key_up_held'
   - conditions: '{{ scene_id == 1 and state_value_id == 2 }}'
-    sequence: !input 'button_b_held'
+    sequence: !input 'key_down_held'
   - conditions: '{{ scene_id == 2 and state_value_id == 3 }}'
-    sequence: !input 'button_a2'
+    sequence: !input 'key_up2'
   - conditions: '{{ scene_id == 1 and state_value_id == 3 }}'
-    sequence: !input 'button_b2'
+    sequence: !input 'key_down2'
   - conditions: '{{ scene_id == 2 and state_value_id == 4 }}'
-    sequence: !input 'button_a3'
+    sequence: !input 'key_up3'
   - conditions: '{{ scene_id == 1 and state_value_id == 4 }}'
-    sequence: !input 'button_b3'
+    sequence: !input 'key_down3'
   - conditions: '{{ scene_id == 2 and state_value_id == 5 }}'
-    sequence: !input 'button_a4'
+    sequence: !input 'key_up4'
   - conditions: '{{ scene_id == 1 and state_value_id == 5 }}'
-    sequence: !input 'button_b4'
+    sequence: !input 'key_down4'
   - conditions: '{{ scene_id == 2 and state_value_id == 6 }}'
-    sequence: !input 'button_a5'
+    sequence: !input 'key_up5'
   - conditions: '{{ scene_id == 1 and state_value_id == 6 }}'
-    sequence: !input 'button_b5'
+    sequence: !input 'key_down5'
