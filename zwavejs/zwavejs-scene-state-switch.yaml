@@ -49,49 +49,49 @@ blueprint:
       default: []
       selector:
         action: {}
-    key_up2:
+    key_up_2x:
       name: Key Up/On press 2x
       description: Action to run, when the button is pressed two times.
       default: []
       selector:
         action: {}
-    key_down2:
+    key_down_2x:
       name: Key Down/Off press 2x
       description: Action to run, when the button is pressed two times.
       default: []
       selector:
         action: {}
-    key_up3:
+    key_up_3x:
       name: Key Up/On press 3x
       description: Action to run, when the button is pressed three times.
       default: []
       selector:
         action: {}
-    key_down3:
+    key_down_3x:
       name: Key Down/Off press 3x
       description: Action to run, when the button is pressed three times.
       default: []
       selector:
         action: {}
-    key_up4:
+    key_up_4x:
       name: Key Up/On press 4x
       description: Action to run, when the button is pressed four times.
       default: []
       selector:
         action: {}
-    key_down4:
+    key_down_4x:
       name: Key Down/Off press 4x
       description: Action to run, when the button is pressed four times.
       default: []
       selector:
         action: {}
-    key_up5:
+    key_up_5x:
       name: Key Up/On press 5x
       description: Action to run, when the button is pressed five times.
       default: []
       selector:
         action: {}
-    key_down5:
+    key_down_5x:
       name: Key Down/Off press 5x
       description: Action to run, when the button is pressed five times.
       default: []
@@ -123,18 +123,18 @@ action:
   - conditions: '{{ scene_id == 1 and event == "KeyHeldDown" }}'
     sequence: !input 'key_down_held'
   - conditions: '{{ scene_id == 2 and event == "KeyPressed2x" }}'
-    sequence: !input 'key_up2'
+    sequence: !input 'key_up_2x'
   - conditions: '{{ scene_id == 1 and event == "KeyPressed2x" }}'
-    sequence: !input 'key_down2'
+    sequence: !input 'key_down_2x'
   - conditions: '{{ scene_id == 2 and event == "KeyPressed3x" }}'
-    sequence: !input 'key_up3'
+    sequence: !input 'key_up_3x'
   - conditions: '{{ scene_id == 1 and event == "KeyPressed3x" }}'
-    sequence: !input 'key_down3'
+    sequence: !input 'key_down_3x'
   - conditions: '{{ scene_id == 2 and event == "KeyPressed4x" }}'
-    sequence: !input 'key_up4'
+    sequence: !input 'key_up_4x'
   - conditions: '{{ scene_id == 1 and event == "KeyPressed4x" }}'
-    sequence: !input 'key_down4'
+    sequence: !input 'key_down_4x'
   - conditions: '{{ scene_id == 2 and event == "KeyPressed5x" }}'
-    sequence: !input 'key_up5'
+    sequence: !input 'key_up_5x'
   - conditions: '{{ scene_id == 1 and event == "KeyPressed5x" }}'
-    sequence: !input 'key_down5'
+    sequence: !input 'key_down_5x'
