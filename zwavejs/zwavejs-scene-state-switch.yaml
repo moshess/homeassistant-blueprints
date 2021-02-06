@@ -1,25 +1,18 @@
 blueprint:
-  name: Zwavejs scene state switch
-  description: Automation blueprint for z-wave switches supporting scene selection
-    from up/down button
+  name: Z-WaveJS swtich
+  description: Automation blueprint for Z-Wave switches that support scene selection
+    from an up/down button and multiple key press gestures
   domain: automation
   input:
-    node_name:
-      name: Name of the zwavejs entity
-      description: Enter the name configured to the device in zwavejs
-    mqtt_device:
-      name: MQTT switch
-      description: List of available MQTT entities. This list is intended for reference only.
-        At this time, it is not known how to or if we can obtain the nodeName
-        and nodeLocation from the device used to filter the events.
+    zwavejs_device:
+      name: Z-Wave JS switch
+      description: Select the sensor device which offers scene selection.
+        Listed devices are not guaranteed to work with any/all of these button mappings.
       selector:
         device:
-          integration: mqtt
+          integration: zwave_js
           entity:
             domain: sensor
-    node_location:
-      name: Location of the zwavejs entity
-      description: Enter the location name configured to the device in zwavejs
     key_up:
       name: Key Up/On press 1x
       description: Action to run, when the button is pressed one time.
@@ -107,42 +100,41 @@ blueprint:
 mode: single
 max_exceeded: silent
 variables:
-  node_name: !input 'node_name'
-  node_location: !input 'node_location'
+  zwavejs_device: !input 'zwavejs_device'
 trigger:
 - platform: event
-  event_type: state_changed
-condition: '{{ trigger.event.data.new_state.attributes.nodeName == (node_name | string) and trigger.event.data.new_state.attributes.nodeLocation == (node_location | string) }}'
+  event_type: zwave_js_event
+condition: '{{ trigger.event.data.device_id == (zwavejs_device | string) and trigger.event.data.command_class == 91 }}'
 action:
 - variables:
-    scene_id: '{{ (trigger.event.data.new_state.attributes.propertyKey | int) }}'
-    state_value_id: '{{ trigger.event.data.new_state.state }}'
+    scene_id: '{{ (trigger.event.data.property_key_name | int) }}' # values 001,002 and sometimes 003
+    event: '{{ trigger.event.data.value }}'
 - choose:
-  - conditions: '{{ scene_id == 2 and state_value_id == 0 }}'
+  - conditions: '{{ scene_id == 2 and event == "KeyPressed" }}'
     sequence: !input 'key_up'
-  - conditions: '{{ scene_id == 1 and state_value_id == 0 }}'
+  - conditions: '{{ scene_id == 1 and event == "KeyPressed" }}'
     sequence: !input 'key_down'
-  - conditions: '{{ scene_id == 2 and state_value_id == 1 }}'
+  - conditions: '{{ scene_id == 2 and event == "KeyReleased" }}'
     sequence: !input 'key_up_released'
-  - conditions: '{{ scene_id == 1 and state_value_id == 1 }}'
+  - conditions: '{{ scene_id == 1 and event == "KeyReleased" }}'
     sequence: !input 'key_down_released'
-  - conditions: '{{ scene_id == 2 and state_value_id == 2 }}'
+  - conditions: '{{ scene_id == 2 and event == "KeyHeldDown" }}'
     sequence: !input 'key_up_held'
-  - conditions: '{{ scene_id == 1 and state_value_id == 2 }}'
+  - conditions: '{{ scene_id == 1 and event == "KeyHeldDown" }}'
     sequence: !input 'key_down_held'
-  - conditions: '{{ scene_id == 2 and state_value_id == 3 }}'
+  - conditions: '{{ scene_id == 2 and event == "KeyPressed2x" }}'
     sequence: !input 'key_up2'
-  - conditions: '{{ scene_id == 1 and state_value_id == 3 }}'
+  - conditions: '{{ scene_id == 1 and event == "KeyPressed2x" }}'
     sequence: !input 'key_down2'
-  - conditions: '{{ scene_id == 2 and state_value_id == 4 }}'
+  - conditions: '{{ scene_id == 2 and event == "KeyPressed3x" }}'
     sequence: !input 'key_up3'
-  - conditions: '{{ scene_id == 1 and state_value_id == 4 }}'
+  - conditions: '{{ scene_id == 1 and event == "KeyPressed3x" }}'
     sequence: !input 'key_down3'
-  - conditions: '{{ scene_id == 2 and state_value_id == 5 }}'
+  - conditions: '{{ scene_id == 2 and event == "KeyPressed4x" }}'
     sequence: !input 'key_up4'
-  - conditions: '{{ scene_id == 1 and state_value_id == 5 }}'
+  - conditions: '{{ scene_id == 1 and event == "KeyPressed4x" }}'
     sequence: !input 'key_down4'
-  - conditions: '{{ scene_id == 2 and state_value_id == 6 }}'
+  - conditions: '{{ scene_id == 2 and event == "KeyPressed5x" }}'
     sequence: !input 'key_up5'
-  - conditions: '{{ scene_id == 1 and state_value_id == 6 }}'
+  - conditions: '{{ scene_id == 1 and event == "KeyPressed5x" }}'
     sequence: !input 'key_down5'
