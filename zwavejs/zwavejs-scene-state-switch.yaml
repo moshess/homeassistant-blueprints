@@ -2,6 +2,7 @@ blueprint:
   name: Z-WaveJS swtich
   description: Automation blueprint for Z-Wave switches that support scene selection
     from an up/down button and multiple key press gestures
+  source_url: https://github.com/moshess/homeassistant-blueprints/blob/master/zwavejs/zwavejs-scene-state-switch.yaml
   domain: automation
   input:
     zwavejs_device_id:

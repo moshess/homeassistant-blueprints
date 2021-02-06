@@ -2,6 +2,7 @@ blueprint:
   name: MQTT scene state switch
   description: Automation blueprint for many z-wave switches with up/down button
     and multiple key presses. Designed with Inovelli LNSW31 and Zooz ZEN34 mappings in mind.
+  source_url: https://github.com/moshess/homeassistant-blueprints/blob/master/mqtt/mqtt-scene-state-switch.yaml
   domain: automation
   input:
     node_name:
