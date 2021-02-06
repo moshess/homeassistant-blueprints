@@ -13,6 +13,13 @@ blueprint:
           integration: zwave_js
           entity:
             domain: sensor
+    is_key_up_scene_two:
+      name: Key Up/Down scene
+      description: The key-up scene button varies for some devices. Toggle this scene value
+        when the up/down buttons are backwards.
+      default: true
+      selector:
+        boolean:
     key_up:
       name: Key Up/On press 1x
       description: Action to run, when the button is pressed one time.
@@ -101,6 +108,9 @@ mode: single
 max_exceeded: silent
 variables:
   zwavejs_device_id: !input 'zwavejs_device_id'
+  is_key_up_scene_two: !input 'is_key_up_scene_two'
+  key_up_scene_id: '{{ (1,2)[is_key_up_scene_two] }}'
+  key_down_scene_id: '{{ (2,1)[is_key_up_scene_two] }}'
 trigger:
 - platform: event
   event_type: zwave_js_event
@@ -108,33 +118,35 @@ condition: '{{ trigger.event.data.device_id == (zwavejs_device_id | string) and 
 action:
 - variables:
     scene_id: '{{ (trigger.event.data.property_key_name | int) }}' # values 001,002 and sometimes 003
+    is_key_up: '{{ scene_id == ( key_up_scene_id | int ) }}'
+    is_key_down: '{{ scene_id == ( key_down_scene_id | int ) }}'
     key_pressed: '{{ trigger.event.data.value }}'
 - choose:
-  - conditions: '{{ scene_id == 2 and key_pressed == "KeyPressed" }}'
+  - conditions: '{{ is_key_up and key_pressed == "KeyPressed" }}'
     sequence: !input 'key_up'
-  - conditions: '{{ scene_id == 1 and key_pressed == "KeyPressed" }}'
+  - conditions: '{{ is_key_down and key_pressed == "KeyPressed" }}'
     sequence: !input 'key_down'
-  - conditions: '{{ scene_id == 2 and key_pressed == "KeyReleased" }}'
+  - conditions: '{{ is_key_up and key_pressed == "KeyReleased" }}'
     sequence: !input 'key_up_released'
-  - conditions: '{{ scene_id == 1 and key_pressed == "KeyReleased" }}'
+  - conditions: '{{ is_key_down and key_pressed == "KeyReleased" }}'
     sequence: !input 'key_down_released'
-  - conditions: '{{ scene_id == 2 and key_pressed == "KeyHeldDown" }}'
+  - conditions: '{{ is_key_up and key_pressed == "KeyHeldDown" }}'
     sequence: !input 'key_up_held'
-  - conditions: '{{ scene_id == 1 and key_pressed == "KeyHeldDown" }}'
+  - conditions: '{{ is_key_down and key_pressed == "KeyHeldDown" }}'
     sequence: !input 'key_down_held'
-  - conditions: '{{ scene_id == 2 and key_pressed == "KeyPressed2x" }}'
+  - conditions: '{{ is_key_up and key_pressed == "KeyPressed2x" }}'
     sequence: !input 'key_up_2x'
-  - conditions: '{{ scene_id == 1 and key_pressed == "KeyPressed2x" }}'
+  - conditions: '{{ is_key_down and key_pressed == "KeyPressed2x" }}'
     sequence: !input 'key_down_2x'
-  - conditions: '{{ scene_id == 2 and key_pressed == "KeyPressed3x" }}'
+  - conditions: '{{ is_key_up and key_pressed == "KeyPressed3x" }}'
     sequence: !input 'key_up_3x'
-  - conditions: '{{ scene_id == 1 and key_pressed == "KeyPressed3x" }}'
+  - conditions: '{{ is_key_down and key_pressed == "KeyPressed3x" }}'
     sequence: !input 'key_down_3x'
-  - conditions: '{{ scene_id == 2 and key_pressed == "KeyPressed4x" }}'
+  - conditions: '{{ is_key_up and key_pressed == "KeyPressed4x" }}'
     sequence: !input 'key_up_4x'
-  - conditions: '{{ scene_id == 1 and key_pressed == "KeyPressed4x" }}'
+  - conditions: '{{ is_key_down and key_pressed == "KeyPressed4x" }}'
     sequence: !input 'key_down_4x'
-  - conditions: '{{ scene_id == 2 and key_pressed == "KeyPressed5x" }}'
+  - conditions: '{{ is_key_up and key_pressed == "KeyPressed5x" }}'
     sequence: !input 'key_up_5x'
-  - conditions: '{{ scene_id == 1 and key_pressed == "KeyPressed5x" }}'
+  - conditions: '{{ is_key_down and key_pressed == "KeyPressed5x" }}'
     sequence: !input 'key_down_5x'
