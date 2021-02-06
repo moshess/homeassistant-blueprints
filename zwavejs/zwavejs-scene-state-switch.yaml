@@ -4,7 +4,7 @@ blueprint:
     from an up/down button and multiple key press gestures
   domain: automation
   input:
-    zwavejs_device:
+    zwavejs_device_id:
       name: Z-Wave JS switch
       description: Select the sensor device which offers scene selection.
         Listed devices are not guaranteed to work with any/all of these button mappings.
@@ -100,11 +100,11 @@ blueprint:
 mode: single
 max_exceeded: silent
 variables:
-  zwavejs_device: !input 'zwavejs_device'
+  zwavejs_device_id: !input 'zwavejs_device_id'
 trigger:
 - platform: event
   event_type: zwave_js_event
-condition: '{{ trigger.event.data.device_id == (zwavejs_device | string) and trigger.event.data.command_class == 91 }}'
+condition: '{{ trigger.event.data.device_id == (zwavejs_device_id | string) and trigger.event.data.command_class == 91 }}'
 action:
 - variables:
     scene_id: '{{ (trigger.event.data.property_key_name | int) }}' # values 001,002 and sometimes 003
