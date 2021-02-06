@@ -1,7 +1,7 @@
 blueprint:
-  name: Z-WaveJS swtich
-  description: Automation blueprint for Z-Wave switches that support scene selection
-    from an up/down button and multiple key press gestures
+  name: Z-WaveJS dimmer switch
+  description: Automation blueprint for Z-Wave dimmer switches with up/down buttons
+    and multiple key press scene gestures.
   source_url: https://github.com/moshess/homeassistant-blueprints/blob/master/zwavejs/zwavejs-scene-state-switch.yaml
   domain: automation
   input:
@@ -16,20 +16,20 @@ blueprint:
             domain: sensor
     is_key_up_scene_two:
       name: Key Up/Down orientation
-      description: The key-up scene button varies for some devices. Toggle this scene value
+      description: The key-up scene button varies for some devices. Toggle this value
         when the up/down buttons are backwards.
       default: true
       selector:
         boolean:
     key_up:
       name: Key Up/On press 1x
-      description: Action to run, when the button is pressed one time.
+      description: Action to run, when the up button is pressed one time.
       default: []
       selector:
         action: {}
     key_down:
       name: Key Down/Off press 1x
-      description: Action to run, when the button is pressed one time.
+      description: Action to run, when the down button is pressed one time.
       default: []
       selector:
         action: {}
@@ -46,8 +46,8 @@ blueprint:
       selector:
         action: {}
     is_loop_for_key_up_held:
-      name: Key Up/On held loop
-      description: Loop the action until the up button is released.
+      name: Key Up/On held loop?
+      description: Asserts whether you want to loop the held action until the button is released which could simulate the impact of a dimmer switch
       default: false
       selector:
         boolean:
@@ -58,68 +58,68 @@ blueprint:
       selector:
         action: {}
     is_loop_for_key_down_held:
-      name: Key Down/On held loop
-      description: Loop the action until the down button is released.
+      name: Key Down/On held loop?
+      description: Asserts whether you want to loop the held action until the button is released which could simulate the impact of a dimmer switch
       default: false
       selector:
         boolean:
     key_up_released:
       name: Key Up/On released
-      description: Action to run, when the button is released.
+      description: Action to run, when the up button is released.
       default: []
       selector:
         action: {}
     key_down_released:
       name: Key Down/Off released
-      description: Action to run, when the button is released.
+      description: Action to run, when the down button is released.
       default: []
       selector:
         action: {}
     key_up_2x:
       name: Key Up/On press 2x
-      description: Action to run, when the button is pressed two times.
+      description: Action to run, when the up button is pressed two times.
       default: []
       selector:
         action: {}
     key_down_2x:
       name: Key Down/Off press 2x
-      description: Action to run, when the button is pressed two times.
+      description: Action to run, when the down button is pressed two times.
       default: []
       selector:
         action: {}
     key_up_3x:
       name: Key Up/On press 3x
-      description: Action to run, when the button is pressed three times.
+      description: Action to run, when the up button is pressed three times.
       default: []
       selector:
         action: {}
     key_down_3x:
       name: Key Down/Off press 3x
-      description: Action to run, when the button is pressed three times.
+      description: Action to run, when the down button is pressed three times.
       default: []
       selector:
         action: {}
     key_up_4x:
       name: Key Up/On press 4x
-      description: Action to run, when the button is pressed four times.
+      description: Action to run, when the up button is pressed four times.
       default: []
       selector:
         action: {}
     key_down_4x:
       name: Key Down/Off press 4x
-      description: Action to run, when the button is pressed four times.
+      description: Action to run, when the down button is pressed four times.
       default: []
       selector:
         action: {}
     key_up_5x:
       name: Key Up/On press 5x
-      description: Action to run, when the button is pressed five times.
+      description: Action to run, when the up button is pressed five times.
       default: []
       selector:
         action: {}
     key_down_5x:
       name: Key Down/Off press 5x
-      description: Action to run, when the button is pressed five times.
+      description: Action to run, when the down button is pressed five times.
       default: []
       selector:
         action: {}
