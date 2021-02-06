@@ -40,17 +40,29 @@ blueprint:
       selector:
         action: {}
     key_up_held:
-      name: Key Up/On held down
-      description: Action to run, when the button is held down.
+      name: Key Up/On held
+      description: Action to run, when the up button is held.
       default: []
       selector:
         action: {}
+    is_loop_for_key_up_held:
+      name: Key Up/On held loop
+      description: Loop the action until the up button is released.
+      default: false
+      selector:
+        boolean:
     key_down_held:
-      name: Key Down/Off held down
-      description: Action to run, when the button is held down.
+      name: Key Down/Off held
+      description: Action to run, when the down button is held.
       default: []
       selector:
         action: {}
+    is_loop_for_key_down_held:
+      name: Key Down/On held loop
+      description: Loop the action until the down button is released.
+      default: false
+      selector:
+        boolean:
     key_up_released:
       name: Key Up/On released
       description: Action to run, when the button is released.
@@ -111,13 +123,16 @@ blueprint:
       default: []
       selector:
         action: {}
-mode: single
+# mode restart ensures hold actions are interrupted when the corresponding release action is received
+mode: restart
 max_exceeded: silent
 variables:
   zwavejs_device_id: !input 'zwavejs_device_id'
   is_key_up_scene_two: !input 'is_key_up_scene_two'
   key_up_scene_id: '{{ ( (1,2)[is_key_up_scene_two] | int ) }}'
   key_down_scene_id: '{{ ( (2,1)[is_key_up_scene_two] | int ) }}'
+  is_loop_for_key_up_held: !input 'is_loop_for_key_up_held'
+  is_loop_for_key_down_held: !input 'is_loop_for_key_down_held'
 trigger:
 - platform: event
   event_type: zwave_js_event
@@ -138,9 +153,19 @@ action:
   - conditions: '{{ scene_id == key_down_scene_id and key_pressed == "KeyReleased" }}'
     sequence: !input 'key_down_released'
   - conditions: '{{ scene_id == key_up_scene_id and key_pressed == "KeyHeldDown" }}'
-    sequence: !input 'key_up_held'
+    sequence:
+      # if looping is enabled, loop the action indefinitely
+      # repeat until the automation is restarted ie. when the corresponding release message is received
+      - repeat:
+          sequence: !input 'key_up_held'
+          until: '{{ not is_loop_for_key_up_held }}'
   - conditions: '{{ scene_id == key_down_scene_id and key_pressed == "KeyHeldDown" }}'
-    sequence: !input 'key_down_held'
+    sequence:
+      # if looping is enabled, loop the action indefinitely
+      # repeat until the automation is restarted ie. when the corresponding release message is received
+      - repeat:
+          sequence: !input 'key_down_held'
+          until: '{{ not is_loop_for_key_down_held }}'
   - conditions: '{{ scene_id == key_up_scene_id and key_pressed == "KeyPressed2x" }}'
     sequence: !input 'key_up_2x'
   - conditions: '{{ scene_id == key_down_scene_id and key_pressed == "KeyPressed2x" }}'
