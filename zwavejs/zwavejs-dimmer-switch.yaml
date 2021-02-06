@@ -1,0 +1,184 @@
+blueprint:
+  name: Z-WaveJS dimmer switch
+  description: Automation blueprint for Z-Wave dimmer switches with up/down buttons
+    and multiple key press scene gestures.
+  source_url: https://github.com/moshess/homeassistant-blueprints/blob/master/zwavejs/zwavejs-scene-state-switch.yaml
+  domain: automation
+  input:
+    zwavejs_device_id:
+      name: Z-Wave JS switch
+      description: Select the sensor device which offers scene selection.
+        Listed devices are not guaranteed to work with any/all of these button mappings.
+      selector:
+        device:
+          integration: zwave_js
+          entity:
+            domain: sensor
+    is_key_up_scene_two:
+      name: Key Up/Down orientation
+      description: The key-up scene button varies for some devices. Toggle this value
+        when the up/down buttons are backwards.
+      default: true
+      selector:
+        boolean:
+    key_up:
+      name: Key Up/On press 1x
+      description: Action to run, when the up button is pressed one time.
+      default: []
+      selector:
+        action: {}
+    key_down:
+      name: Key Down/Off press 1x
+      description: Action to run, when the down button is pressed one time.
+      default: []
+      selector:
+        action: {}
+    key_config:
+      name: Config scene
+      description: Action to run, when the config button is pressed (like the one from Inovelli switches)
+      default: []
+      selector:
+        action: {}
+    key_up_held:
+      name: Key Up/On held
+      description: Action to run, when the up button is held.
+      default: []
+      selector:
+        action: {}
+    is_loop_for_key_up_held:
+      name: Key Up/On held loop?
+      description: Asserts whether you want to loop the held action until the button is released which could simulate the impact of a dimmer switch
+      default: false
+      selector:
+        boolean:
+    key_down_held:
+      name: Key Down/Off held
+      description: Action to run, when the down button is held.
+      default: []
+      selector:
+        action: {}
+    is_loop_for_key_down_held:
+      name: Key Down/On held loop?
+      description: Asserts whether you want to loop the held action until the button is released which could simulate the impact of a dimmer switch
+      default: false
+      selector:
+        boolean:
+    key_up_released:
+      name: Key Up/On released
+      description: Action to run, when the up button is released.
+      default: []
+      selector:
+        action: {}
+    key_down_released:
+      name: Key Down/Off released
+      description: Action to run, when the down button is released.
+      default: []
+      selector:
+        action: {}
+    key_up_2x:
+      name: Key Up/On press 2x
+      description: Action to run, when the up button is pressed two times.
+      default: []
+      selector:
+        action: {}
+    key_down_2x:
+      name: Key Down/Off press 2x
+      description: Action to run, when the down button is pressed two times.
+      default: []
+      selector:
+        action: {}
+    key_up_3x:
+      name: Key Up/On press 3x
+      description: Action to run, when the up button is pressed three times.
+      default: []
+      selector:
+        action: {}
+    key_down_3x:
+      name: Key Down/Off press 3x
+      description: Action to run, when the down button is pressed three times.
+      default: []
+      selector:
+        action: {}
+    key_up_4x:
+      name: Key Up/On press 4x
+      description: Action to run, when the up button is pressed four times.
+      default: []
+      selector:
+        action: {}
+    key_down_4x:
+      name: Key Down/Off press 4x
+      description: Action to run, when the down button is pressed four times.
+      default: []
+      selector:
+        action: {}
+    key_up_5x:
+      name: Key Up/On press 5x
+      description: Action to run, when the up button is pressed five times.
+      default: []
+      selector:
+        action: {}
+    key_down_5x:
+      name: Key Down/Off press 5x
+      description: Action to run, when the down button is pressed five times.
+      default: []
+      selector:
+        action: {}
+# mode restart ensures hold actions are interrupted when the corresponding release action is received
+mode: restart
+max_exceeded: silent
+variables:
+  zwavejs_device_id: !input 'zwavejs_device_id'
+  is_key_up_scene_two: !input 'is_key_up_scene_two'
+  key_up_scene_id: '{{ ( (1,2)[is_key_up_scene_two] | int ) }}'
+  key_down_scene_id: '{{ ( (2,1)[is_key_up_scene_two] | int ) }}'
+  is_loop_for_key_up_held: !input 'is_loop_for_key_up_held'
+  is_loop_for_key_down_held: !input 'is_loop_for_key_down_held'
+trigger:
+- platform: event
+  event_type: zwave_js_event
+condition: '{{ trigger.event.data.device_id == (zwavejs_device_id | string) and trigger.event.data.command_class == 91 }}'
+action:
+- variables:
+    scene_id: '{{ (trigger.event.data.property_key_name | int) }}' # values 001,002 and sometimes 003
+    key_pressed: '{{ trigger.event.data.value }}'
+- choose:
+  - conditions: '{{ scene_id == key_up_scene_id and key_pressed == "KeyPressed" }}'
+    sequence: !input 'key_up'
+  - conditions: '{{ scene_id == key_down_scene_id and key_pressed == "KeyPressed" }}'
+    sequence: !input 'key_down'
+  - conditions: '{{ scene_id == 3 and key_pressed == "KeyPressed" }}'
+    sequence: !input 'key_config'
+  - conditions: '{{ scene_id == key_up_scene_id and key_pressed == "KeyReleased" }}'
+    sequence: !input 'key_up_released'
+  - conditions: '{{ scene_id == key_down_scene_id and key_pressed == "KeyReleased" }}'
+    sequence: !input 'key_down_released'
+  - conditions: '{{ scene_id == key_up_scene_id and key_pressed == "KeyHeldDown" }}'
+    sequence:
+      # if looping is enabled, loop the action indefinitely
+      # repeat until the automation is restarted ie. when the corresponding release message is received
+      - repeat:
+          sequence: !input 'key_up_held'
+          until: '{{ not is_loop_for_key_up_held }}'
+  - conditions: '{{ scene_id == key_down_scene_id and key_pressed == "KeyHeldDown" }}'
+    sequence:
+      # if looping is enabled, loop the action indefinitely
+      # repeat until the automation is restarted ie. when the corresponding release message is received
+      - repeat:
+          sequence: !input 'key_down_held'
+          until: '{{ not is_loop_for_key_down_held }}'
+  - conditions: '{{ scene_id == key_up_scene_id and key_pressed == "KeyPressed2x" }}'
+    sequence: !input 'key_up_2x'
+  - conditions: '{{ scene_id == key_down_scene_id and key_pressed == "KeyPressed2x" }}'
+    sequence: !input 'key_down_2x'
+  - conditions: '{{ scene_id == key_up_scene_id and key_pressed == "KeyPressed3x" }}'
+    sequence: !input 'key_up_3x'
+  - conditions: '{{ scene_id == key_down_scene_id and key_pressed == "KeyPressed3x" }}'
+    sequence: !input 'key_down_3x'
+  - conditions: '{{ scene_id == key_up_scene_id and key_pressed == "KeyPressed4x" }}'
+    sequence: !input 'key_up_4x'
+  - conditions: '{{ scene_id == key_down_scene_id and key_pressed == "KeyPressed4x" }}'
+    sequence: !input 'key_down_4x'
+  - conditions: '{{ scene_id == key_up_scene_id and key_pressed == "KeyPressed5x" }}'
+    sequence: !input 'key_up_5x'
+  - conditions: '{{ scene_id == key_down_scene_id and key_pressed == "KeyPressed5x" }}'
+    sequence: !input 'key_down_5x'
