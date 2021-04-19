@@ -135,7 +135,7 @@ variables:
   is_loop_for_key_down_held: !input 'is_loop_for_key_down_held'
 trigger:
 - platform: event
-  event_type: zwave_js_event
+  event_type: zwave_js_value_notification
 condition: '{{ trigger.event.data.device_id == (zwavejs_device_id | string) and trigger.event.data.command_class == 91 }}'
 action:
 - variables:
